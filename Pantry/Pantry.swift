@@ -48,6 +48,15 @@ open class Pantry {
         
         warehouse.write(object.toDictionary() as Any, expires: expires)
     }
+    
+    /**
+     Packs a dictionary
+     */
+    open static func pack(_ object: Any, key: String, expires: StorageExpiry = .never) {
+        let warehouse = getWarehouse(key)
+        
+        warehouse.write(object as Any, expires: expires)
+    }
 
     /**
      Packs a generic collection of structs that conform to the `Storable` protocol
@@ -128,6 +137,19 @@ open class Pantry {
         
         if warehouse.cacheExists() {
             return T(warehouse: warehouse)
+        }
+        
+        return nil
+    }
+    
+    /**
+    Unpacks a dictionary
+    */
+    open static func unpack(_ key: String) -> Any? {
+        let warehouse = getWarehouse(key)
+        
+        if warehouse.cacheExists() {
+            return warehouse.loadCache()
         }
         
         return nil
